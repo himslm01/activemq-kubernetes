@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: active-mq
+
+images:
+- name: activemq
+  newName: <your-registry>/activemq
+  newTag: 5.18.6
+- name: activemq-readiness
+  newName: <your-registry>/activemq-reddiness
+  newTag: 5.18.6
+
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    type: generated
+  annotations:
+    note: generated
+
+secretGenerator:
+- name: activemq-jetty-creds
+  files:
+  - activemq-config/jetty-realm.properties
+
+patches:
+- target:
+    version: v1
+    kind: Service
+    name: activemq
+  path: service-patch.yaml
+
+resources:
+- ../../base/
+- namespace.yaml
+- persistentVolume.yaml

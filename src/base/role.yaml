@@ -1,0 +1,8 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: activemq-update-labels-role
+rules:
+- apiGroups: [""] # Empty string for kubernetes system
+  resources: [pods]
+  verbs: [patch]

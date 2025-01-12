@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    type: generated
+  annotations:
+    note: generated
+
+configMapGenerator:
+- name: activemq-config
+  files:
+  - activemq-config/activemq.xml
+  - activemq-config/jetty.xml
+
+resources:
+- serviceAccount.yaml
+- role.yaml
+- roleBinding.yaml
+- service.yaml
+- deployment.yaml

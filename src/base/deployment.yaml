@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: activemq
+  labels:
+    app: activemq
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: activemq
+  template:
+    metadata:
+      labels:
+        app: activemq
+        leader: "no"
+    spec:
+      serviceAccountName: activemq-update-labels-sa
+      containers:
+        - name: activemq
+          image: activemq
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: 500Mi
+              cpu: 200m
+            limits:
+              memory: 1500Mi
+              cpu: 1000m
+          volumeMounts:
+            - name: activemq-config
+              mountPath: /app/activemq/conf/activemq.xml
+              subPath: activemq.xml
+            - name: activemq-config
+              mountPath: /app/activemq/conf/jetty.xml
+              subPath: jetty.xml
+            - name: activemq-jetty-creds
+              mountPath: /app/activemq/conf/jetty-realm.properties
+              subPath: jetty-realm.properties
+            - mountPath: /app/activemq/data
+              name: data
+          ports:
+            - name: dashboard
+              containerPort: 8161
+              protocol: TCP
+            - name: openwire
+              containerPort: 61616
+              protocol: TCP
+            - name: amqp
+              containerPort: 5672
+              protocol: TCP
+            - name: stomp
+              containerPort: 61613
+              protocol: TCP
+            - name: mqtt
+              containerPort: 1883
+              protocol: TCP
+        - name: "activemq-readiness"
+          image: "activemq-readiness"
+          resources:
+            requests:
+              memory: 200Mi
+              cpu: 100m
+            limits:
+              memory: 500Mi
+              cpu: 500m
+      volumes:
+        - name: activemq-jetty-creds
+          secret:
+            secretName: activemq-jetty-creds
+        - name: activemq-config
+          configMap:
+            name: activemq-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: nas3-activemq-data
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000

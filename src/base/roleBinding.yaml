@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: activemq-update-labels-binding
+subjects:
+- kind: ServiceAccount
+  name: activemq-update-labels-sa
+  namespace: active-mq
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: activemq-update-labels-role
