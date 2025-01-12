@@ -83,12 +83,12 @@ This assumes that you have persistent storage available that you can make a `Per
 
 In the copied override directory:
 
-* Edit the file `kustomization.yaml` to replace the current values for `images/newName` and `images/newTag` with your registry, image name, and tag.
-* Edit the file `activemq-config/jetty-realm.properties` to set sensible usernames and passwords for the web admin pages of ActiveMQ Classic server.
-* Edit the file `service-patch.yaml` to set the `loadBalancerIP` address for the ActiveMQ service.
-* Edit the file `persistentVolume.yaml` to point to your storage.
+* Edit the file [`kustomization.yaml`](src/override/example/kustomization.yaml) to replace the current values for `images/newName` and `images/newTag` with your registry, image name, and tag.
+* Edit the file [`activemq-config/jetty-realm.properties`](src/override/example/activemq-config/jetty-realm.properties) to set sensible usernames and passwords for the web admin pages of ActiveMQ Classic server.
+* Edit the file [`service-patch.yaml`](src/override/example/service-patch.yaml) to set the `loadBalancerIP` address for the ActiveMQ service.
+* Edit the file [`persistentVolume.yaml`](src/override/example/persistentVolume.yaml) to point to your storage.
 
-These kubectl kustomize manifest fragments assume that you will deploy the ActiveMQ system into a new `namespace` called `active-mq`. If that is not the case then edit the files `kustomization.yaml` and `namespace.yaml` in your override directory to set the namespace you will use.
+These kubectl kustomize manifest fragments assume that you will deploy the ActiveMQ system into a new `namespace` called `active-mq`. If that is not the case then edit the files [`kustomization.yaml`](src/override/example/kustomization.yaml) and [`namespace.yaml`](src/override/example/namespace.yaml) in your override directory to set the namespace you will use.
 
 Now you should be ready to deploy the ActiveMQ system into your Kubernetes cluster. Check that the kustomized yaml manifests are correct by running `kubectl kustomize` against your override directory.
 
