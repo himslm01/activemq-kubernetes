@@ -25,6 +25,10 @@ spec:
       port: 61613
       targetPort: stomp
       protocol: TCP
+    - name: ws
+      port: 61614
+      targetPort: ws
+      protocol: TCP
     - name: mqtt
       port: 1883
       targetPort: mqtt

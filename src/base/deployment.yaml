@@ -52,6 +52,9 @@ spec:
             - name: stomp
               containerPort: 61613
               protocol: TCP
+            - name: ws
+              containerPort: 61614
+              protocol: TCP
             - name: mqtt
               containerPort: 1883
               protocol: TCP
