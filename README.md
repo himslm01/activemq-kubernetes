@@ -14,6 +14,8 @@ This repository also contains example Kubernetes [kubectl kustomize](https://kub
 
 Please make sure you are familiar with [ActiveMQ](https://activemq.apache.org/components/classic/), [building and publishing OCI images with Docker](https://docs.docker.com/get-started/docker-concepts/building-images/build-tag-and-publish-an-image/) and [Kubernetes](https://kubernetes.io/).
 
+Warning: the [`jetty.xml`](src/base/activemq-config/jetty.xml) configuration includes the demo application context. You don't want that to be available on an ActiveMQ that is accessible to anyone who you do not trust.
+
 ## High Availability
 
 The High Availability system used in here is ActiveMQ Classic's built-in [Shared File System Master Slave](https://activemq.apache.org/components/classic/documentation/shared-file-system-master-slave) (their words).
@@ -87,6 +89,8 @@ In the copied override directory:
 * Edit the file [`activemq-config/jetty-realm.properties`](src/override/example/activemq-config/jetty-realm.properties) to set sensible usernames and passwords for the web admin pages of ActiveMQ Classic server.
 * Edit the file [`service-patch.yaml`](src/override/example/service-patch.yaml) to set the `loadBalancerIP` address for the ActiveMQ service.
 * Edit the file [`persistentVolume.yaml`](src/override/example/persistentVolume.yaml) to point to your storage.
+
+Please check that the [`activemq.xml`](src/base/activemq-config/activemq.xml) and [`jetty.xml`](src/base/activemq-config/jetty.xml) configuration files contain only the configuration you require, and optionally override them in your override directory.
 
 These kubectl kustomize manifest fragments assume that you will deploy the ActiveMQ system into a new `namespace` called `active-mq`. If that is not the case then edit the files [`kustomization.yaml`](src/override/example/kustomization.yaml) and [`namespace.yaml`](src/override/example/namespace.yaml) in your override directory to set the namespace you will use.
 
