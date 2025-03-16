@@ -26,7 +26,7 @@ When the currently active server node dies it will release the exclusive lock an
 
 In traditional static ActiveMQ systems the ActiveMQ clients will be given a connection string including all of the ActiveMQ Classic server nodes. The client will try to connect to all of the server nodes in turn. Since only one of the ActiveMQ Classic server nodes will have open network connections the ActiveMQ clients will connect to the currently active server node. When the currently active server node dies the clients will try once again to connect to all of the server nodes in turn and will connect to the new currently active server node.
 
-![Shared File System Master Slave diagram](src/docs/activemq-shared_file_system_master_slave.png)
+![Shared File System Master Slave diagram](docs/activemq-shared_file_system_master_slave.png)
 
 In a dynamic ActiveMQ system running in Kubernetes the ActiveMQ clients cannot know a list of ActiveMQ Classic servers. Instead the ActiveMQ clients are given one Kubernetes Service to connect to.
 
@@ -38,7 +38,7 @@ The ActiveMQ Kubernetes Service definition has a selector which is looking for P
 
 The ActiveMQ Pods consist of two containers. The first container runs the ActiveMQ Classic server. The second container runs a Bash script which constantly tries to connect to the local ActiveMQ Classic server in the Pod. When it can connect, which can only happen when the local ActiveMQ Classic server is the currently active server node, the script changes a label on its pod to be `leader=yes`. The Kubernetes Service now has one Pod it can route ActiveMQ client connections to.
 
-![ActiveMQ Kubernetes diagram](src/docs/activemq-kubernetes.png)
+![ActiveMQ Kubernetes diagram](docs/activemq-kubernetes.png)
 
 When the currently active ActiveMQ Classic server node dies, the Pod it was running in will be deleted and a new Pod will be created with the label `leader=no`. But another of the waiting ActiveMQ Classic servers will have become the currently active server and the Bash script in that Pod will have updated its Pod label from `leader=no` to `leader=yes`. The Kubernetes Service will now route ActiveMQ client connections to that new currently active server in its Pod. This process typically takes a few seconds. The ActiveMQ clients should be able to withstand this change-over process.
 
@@ -78,32 +78,32 @@ This assumes that you have persistent storage available that you can make a `Per
 * Make a new kubectl kustomize override directory by copying the directory `override/example` and its contents to a new directory within the `override` directory.
 
   ```code
-  pushd src/override
+  pushd src/kustomize/override
   cp -va example foo
   popd
   ```
 
 In the copied override directory:
 
-* Edit the file [`kustomization.yaml`](src/override/example/kustomization.yaml) to replace the current values for `images/newName` and `images/newTag` with your registry, image name, and tag.
-* Edit the file [`activemq-config/jetty-realm.properties`](src/override/example/activemq-config/jetty-realm.properties) to set sensible usernames and passwords for the web admin pages of ActiveMQ Classic server.
-* Edit the file [`service-patch.yaml`](src/override/example/service-patch.yaml) to set the `loadBalancerIP` address for the ActiveMQ service.
-* Edit the file [`persistentVolume.yaml`](src/override/example/persistentVolume.yaml) to point to your storage.
+* Edit the file [`kustomization.yaml`](src/kustomize/override/example/kustomization.yaml) to replace the current values for `images/newName` and `images/newTag` with your registry, image name, and tag.
+* Edit the file [`activemq-config/jetty-realm.properties`](src/kustomize/override/example/activemq-config/jetty-realm.properties) to set sensible usernames and passwords for the web admin pages of ActiveMQ Classic server.
+* Edit the file [`service-patch.yaml`](src/kustomize/override/example/service-patch.yaml) to set the `loadBalancerIP` address for the ActiveMQ service.
+* Edit the file [`persistentVolume.yaml`](src/kustomize/override/example/persistentVolume.yaml) to point to your storage.
 
-Please check that the [`activemq.xml`](src/base/activemq-config/activemq.xml) and [`jetty.xml`](src/base/activemq-config/jetty.xml) configuration files contain only the configuration you require, and optionally override them in your override directory.
+Please check that the [`activemq.xml`](src/kustomize/base/activemq-config/activemq.xml) and [`jetty.xml`](src/kustomize/base/activemq-config/jetty.xml) configuration files contain only the configuration you require, and optionally override them in your override directory.
 
-These kubectl kustomize manifest fragments assume that you will deploy the ActiveMQ system into a new `namespace` called `active-mq`. If that is not the case then edit the files [`kustomization.yaml`](src/override/example/kustomization.yaml) and [`namespace.yaml`](src/override/example/namespace.yaml) in your override directory to set the namespace you will use.
+These kubectl kustomize manifest fragments assume that you will deploy the ActiveMQ system into a new `namespace` called `active-mq`. If that is not the case then edit the files [`kustomization.yaml`](src/kustomize/override/example/kustomization.yaml) and [`namespace.yaml`](src/kustomize/override/example/namespace.yaml) in your override directory to set the namespace you will use.
 
 Now you should be ready to deploy the ActiveMQ system into your Kubernetes cluster. Check that the kustomized yaml manifests are correct by running `kubectl kustomize` against your override directory.
 
 ```code
-kubectl kustomize src/override/foo
+kubectl kustomize src/kustomize/override/foo
 ```
 
 When you believe the output is correct, apply that to your kubernetes cluster.
 
 ```code
-kubectl kustomize src/override/foo | kubectl apply -f - --context <cluster-name>
+kubectl kustomize src/kustomize/override/foo | kubectl apply -f - --context <cluster-name>
 ```
 
 ## Warranty
