@@ -1,0 +1,2 @@
+src/kustomize/override/*
+!src/kustomize/override/example/
